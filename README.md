@@ -49,6 +49,6 @@ Reboot the board and the camera should now be available for use. You can use `ls
 ## Installing required packages on the board
 For the current Nabto setup we need three things on the board. The first is of course Nabto's TCP tunnel application, the second is `gst-rtsp-server` which provides the `rtspclientsink` command to gstreamer's pipelines, the third is `rtsp-simple-server` which we use to provide an RTSP endpoint.
 
-Download the <phytec-nabto.tar.gz> file...
+Download the [phytec-nabto.tar.gz](phytec-nabto.tar.gz) file...
 
 [1]: https://www.phytec.de/cdocuments/?doc=gADyHg#L1029e-A2phyCAMwithphyBOARDPolluxi-MX8MPlusGettingStartedGuide-HowtoChangetheDeviceTree
