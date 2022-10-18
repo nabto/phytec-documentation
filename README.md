@@ -51,7 +51,7 @@ For the current Nabto setup we need three things on the board. The first is of c
 
 For the PD22.1.0 image we downloaded, gstreamer 1.18.5 was included, so that is the version we need for `gst-rtsp-server`.
 
-Next step is to download the [phytec-nabto.tar.gz](phytec-nabto.tar.gz?raw=1) tarball. This archive includes Nabto binaries such as `tcp_tunnel_device` and `thermostat_device`, and it also includes `gst-rtsp-server` version 1.18.5. Since the repository is private at the moment, you will have to use `scp` to copy the tarball over to the board from your computer. However, `wget` is available on the board for if this repository ever becomes public.
+Now, download the [phytec-nabto.tar.gz](phytec-nabto.tar.gz?raw=1) tarball. This archive includes Nabto binaries such as `tcp_tunnel_device` and `thermostat_device`, and it also includes `gst-rtsp-server` version 1.18.5. Since the repository is private at the moment, you will have to use `scp` to copy the tarball over to the board from your computer. However, `wget` is available on the board for if this repository ever becomes public.
 
 Connect the board with an ethernet cable and use `ip a` to find the ip address on the local network, then copy the tarball over.
 
@@ -65,7 +65,7 @@ Now, on the board, extract the tarball contents into `/usr`
 tar xvf phytec-nabto.tar.gz -C /usr
 ```
 
-Ensure that the installation succeeded by running the following two commands and inspecting the output.
+Reboot the board again and ensure that the installation succeeded by running the following two commands and inspecting the output.
 
 ```sh
 tcp_tunnel_device --version
