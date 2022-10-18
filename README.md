@@ -49,6 +49,56 @@ Reboot the board and the camera should now be available for use. You can use `ls
 ## Installing required packages on the board
 For the current Nabto setup we need three things on the board. The first is of course Nabto's TCP tunnel application, the second is `gst-rtsp-server` which provides the `rtspclientsink` command to gstreamer's pipelines, the third is `rtsp-simple-server` which we use to provide an RTSP endpoint.
 
-Download the [phytec-nabto.tar.gz](phytec-nabto.tar.gz) file...
+For the PD22.1.0 image we downloaded, gstreamer 1.18.5 was included, so that is the version we need for `gst-rtsp-server`.
+
+Next step is to download the [phytec-nabto.tar.gz](phytec-nabto.tar.gz?raw=1) tarball. This archive includes Nabto binaries such as `tcp_tunnel_device` and `thermostat_device`, and it also includes `gst-rtsp-server` version 1.18.5. Since the repository is private at the moment, you will have to use `scp` to copy the tarball over to the board from your computer. However, `wget` is available on the board for if this repository ever becomes public.
+
+Connect the board with an ethernet cable and use `ip a` to find the ip address on the local network, then copy the tarball over.
+
+```sh
+scp phytec-nabto.tar.gz root@192.168.1.183:/root/phytec-nabto.tar.gz
+```
+
+Now, on the board, extract the tarball contents into `/usr`
+
+```sh
+tar xvf phytec-nabto.tar.gz -C /usr
+```
+
+Ensure that the installation succeeded by running the following two commands and inspecting the output.
+
+```sh
+tcp_tunnel_device --version
+gst-inspect-1.0 --no-colors rtspclientsink
+```
+
+Finally we need to install [rtsp-simple-server](https://github.com/aler9/rtsp-simple-server/releases), thankfully they have ARM binaries on their github releases. Pick the `arm64v8` binary and download it onto the board using `wget`, then unpack the contents.
+
+```sh
+wget https://github.com/aler9/rtsp-simple-server/releases/download/v0.20.0/rtsp-simple-server_v0.20.0_linux_arm64v8.tar.gz
+tar xvf rtsp-simple-server_v0.20.0_linux_arm64v8.tar.gz
+```
+
+## Starting up and testing an RTSP stream
+
+We are now ready to start up an RTSP stream on the board and playing it on another computer on the local network. First start up `rtsp-simple-server` which will open a listener for an RTSP TCP stream on port 8554.
+```sh
+./rtsp-simple-server &
+```
+Then use gstreamer and `rtspclientsink` to push an RTSP stream to the server.
+```sh
+gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-bayer,format=grbg,depth=8,width=1280,height=800 ! bayer2rgbneon ! queue ! vpuenc_hevc ! queue ! rtspclientsink location=rtsp://0.0.0.0:8554/phycam
+```
+The `/phycam` path can be replaced with whatever you'd prefer.
+
+Note the `vpuenc_h264` part of the pipeline. This is a plugin for gstreamer that allows us to use the hardware encoder to encode into h264 format. You may use `vpuenc_hevc` if you prefer h265/HEVC over h264.
+
+You can display the stream on a separate machine using `ffplay`.
+```sh
+ffplay -rtsp_transport tcp rtsp://192.168.1.183:8554/phycam
+```
+
+## TCP tunnelling with Nabto
+Now we can simply initialize `tcp_tunnel_device` as we usually would with `--init`. Remember to add `rtsp-path` as a metadata entry with value `/phycam` (or whatever other path you decided on) to the rtsp server.
 
 [1]: https://www.phytec.de/cdocuments/?doc=gADyHg#L1029e-A2phyCAMwithphyBOARDPolluxi-MX8MPlusGettingStartedGuide-HowtoChangetheDeviceTree
