@@ -31,7 +31,7 @@ By default there is only the root user with no password.
 ## Enabling the camera using Linux Device Tree
 Linux device tree is a data structure used to describe hardware components. Phytec provides some overlays that we can apply to the device tree to enable certain hardware such as a phytec camera. These overlays have a `.dtbo` extension and can be found in `/boot`
 
-The file `/boot/bootenv.txt` describes which overlays should be applied to the device tree. We can refer to [this camera guide][1], which also describes how to connect the camera to the board. We'll use the `CSI1` port for this, which is also called `X11` in some parts of the documentation.
+The file `/boot/bootenv.txt` describes which overlays should be applied to the device tree. We can refer to [this camera guide](https://www.phytec.de/cdocuments/?doc=gADyHg#L1029e-A2phyCAMwithphyBOARDPolluxi-MX8MPlusGettingStartedGuide-HowtoChangetheDeviceTree), which also describes how to connect the camera to the board. We'll use the `CSI1` port for this, which is also called `X11` in some parts of the documentation.
 
 > NOTICE:
 > We're using PD22.1.0 which has a slightly different approach to modifying the device tree compared to older versions.
@@ -101,4 +101,6 @@ ffplay -rtsp_transport tcp rtsp://192.168.1.183:8554/phycam
 ## TCP tunnelling with Nabto
 Now we can simply initialize `tcp_tunnel_device` as we usually would with `--init`. Remember to add `rtsp-path` as a metadata entry with value `/phycam` (or whatever other path you decided on) to the rtsp server.
 
-[1]: https://www.phytec.de/cdocuments/?doc=gADyHg#L1029e-A2phyCAMwithphyBOARDPolluxi-MX8MPlusGettingStartedGuide-HowtoChangetheDeviceTree
+The general [Nabto Edge RTSP guide](https://docs.nabto.com/developer/guides/platforms/android/video.html) describes how to do the Nabto specific configuration, ie obtain device id and provision a device in the Nabto Cloud backend with public key fingerprint. 
+
+Also [the RTSP guide](https://docs.nabto.com/developer/guides/platforms/android/video.html) describes how to install and use a video client app. Note that we currently only have an Android RTSP video player app available - an iOS version is being developed currently.
