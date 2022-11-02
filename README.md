@@ -85,13 +85,15 @@ We are now ready to start up an RTSP stream on the board and playing it on anoth
 ```sh
 ./rtsp-simple-server &
 ```
-Then use gstreamer and `rtspclientsink` to push an RTSP stream to the server.
+Then we want to use gstreamer to push an RTSP stream to the server. In the very most simple case this can be done with the following command.
 ```sh
-gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-bayer,format=grbg,depth=8,width=1280,height=800 ! bayer2rgbneon ! queue ! vpuenc_hevc ! queue ! rtspclientsink location=rtsp://0.0.0.0:8554/phycam
+gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-bayer,format=grbg,depth=8,width=1280,height=800 ! bayer2rgbneon ! vpuenc_hevc ! queue ! rtspclientsink location=rtsp://0.0.0.0:8554/phycam
 ```
 The `/phycam` path can be replaced with whatever you'd prefer.
 
 Note the `vpuenc_h264` part of the pipeline. This is a plugin for gstreamer that allows us to use the hardware encoder to encode into h264 format. You may use `vpuenc_hevc` if you prefer h265/HEVC over h264.
+
+While this command can be run on its own, the camera stream will have incorrect exposure and color. You must set the correct settings using `v4l2-ctl` etc. to make the stream look good. We have a script [start-rtsp-stream.sh](start-rtsp-stream.sh?raw=1) that you can wget to your board. This script simply does the required setup for a color camera before running the above gstreamer command. If your setup does not match ours, you may have to analyze the scripts included in `/root/gstreamer-examples` to see what the correct settings for your camera would be.
 
 You can display the stream on a separate machine using `ffplay`.
 ```sh
